@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ccd2
+namespace CCD2
 {
   class TextWindow
   {

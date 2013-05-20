@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-namespace ccd2
+namespace CCD2
 {
   public enum ConsoleColor
   {
