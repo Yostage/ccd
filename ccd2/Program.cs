@@ -588,6 +588,7 @@ namespace CCD2
                 return;
             }
 
+            // here's where we peel out the search function
             string match;
             if (matches.Count > 1)
             {
