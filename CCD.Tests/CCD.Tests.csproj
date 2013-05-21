@@ -56,6 +56,12 @@
     <Compile Include="QueryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ccd2\CCD2.csproj">
+      <Project>{83bbfc08-98ac-4d24-a7ad-58721a0e13c0}</Project>
+      <Name>CCD2</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

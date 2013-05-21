@@ -8,12 +8,8 @@ namespace CCD2
 {
     static class Program
     {
-        #region Cross-process mutexes
-        static System.Threading.Mutex rootMutex = new System.Threading.Mutex(false, "CCDRootMutex");
-        static System.Threading.Mutex listMutex = new System.Threading.Mutex(false, "CCDListMutex");
+        // to be deleted
         static System.Threading.Mutex scanMutex = new System.Threading.Mutex(false, "CCDScanMutex");
-        static System.Threading.Mutex ignoreMutex = new System.Threading.Mutex(false, "CCDIgnoreMutex");
-        #endregion
 
 
         /// <summary>

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace CCD2
 {
-    class DiskIndexCache
+    public class DiskIndexCache
     {
         #region Cross-process mutexes
         static System.Threading.Mutex rootMutex = new System.Threading.Mutex(false, "CCDRootMutex");
@@ -16,18 +16,25 @@ namespace CCD2
         #endregion
 
 
+        static DiskIndexCache()
+        {
+            // default app dir
+            AppDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CCD");
+        }
+
         /// <summary>
         /// The User directory belonging to CCD.
         /// </summary>
-        static string AppDir
+        public static string AppDir
         {
-            get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CCD"); }
+            get; set;
+            
         }
 
         /// <summary>
         /// The ignore file name.
         /// </summary>
-        static string IgnoreFilename
+        public static string IgnoreFilename
         {
             get { return System.IO.Path.Combine(AppDir, "ignores.dat"); }
         }
@@ -35,7 +42,7 @@ namespace CCD2
         /// <summary>
         /// The root file name.
         /// </summary>
-        static string RootFilename
+        public static string RootFilename
         {
             get { return System.IO.Path.Combine(AppDir, "roots.dat"); }
         }
@@ -43,7 +50,7 @@ namespace CCD2
         /// <summary>
         /// The list filename.
         /// </summary>
-        static string ListFilename
+        public static string ListFilename
         {
             get { return System.IO.Path.Combine(AppDir, "paths.dat"); }
         }
@@ -217,8 +224,7 @@ namespace CCD2
             // The root directory must exist to be added to the list.
             if (!Directory.Exists(root))
             {
-                Console.WriteLine("Root path \"" + root + "\" does not exist");
-                return;
+                throw new InvalidOperationException("Root path \"" + root + "\" does not exist");
             }
 
             bool alreadyInList = false;
