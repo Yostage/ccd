@@ -323,7 +323,7 @@ namespace CCD2
         /// <param name="dirs"></param>
         /// <param name="searchAllRoots"></param>
         /// <returns>A new list of dirs representing the dirs under the current root</returns>
-        static string[] ValidateCurrentDirectory(string[] roots, string[] dirs, bool searchAllRoots)
+        public static string[] ValidateCurrentDirectory(string[] roots, string[] dirs, bool searchAllRoots)
         {
             string curDir = DiskIndexCache.TrailBackslash(System.Environment.CurrentDirectory.ToLowerInvariant());
 
@@ -399,14 +399,18 @@ namespace CCD2
         static void Main(string[] args)
         {
             if (IsBackgroundScanning())
+            { 
                 Console.WriteLine("Background scanning detected: database may be out of date.");
+            }
 
             List<string> matches = new List<string>();
             int maxLength = 0;
 
             // With no args, list all directories in the current root
             if (args.Length == 0)
+            {
                 args = new string[1] { "" };
+            }
 
             bool searchAllRoots = false;
             switch (args[0].ToLowerInvariant())
@@ -425,6 +429,7 @@ namespace CCD2
                 case "-addignore":
                     if (OptionalDisplayHelp(args.Length < 2))
                         return;
+                    // todo: convert to a list pop
                     // Scope for variable declaration
                     {
                         string[] ignoreArgs = new string[args.Length - 1];
@@ -571,7 +576,7 @@ namespace CCD2
                         }
                     }
                 }
-                match = TextWindow.ChooseUserStringFromList(matches.ToArray(), maxLength, bestMatchIndex); // For more than one match, we need the text list.
+                match = TextWindow.ChooseUserStringFromList(matches, maxLength, bestMatchIndex); // For more than one match, we need the text list.
             }
             else
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace CCD2
 {
@@ -91,8 +92,10 @@ namespace CCD2
         string s = strings[i + scrollPos];
         
         // Ensure that the string is no longer than the box width (minus 2 for the border), then pad the rest with spaces
-        if(s.Length > boxW-2)
-          s = s.Substring(0, boxW-2);
+        if (s.Length > boxW - 2)
+        {
+            s = s.Substring(0, boxW - 2);
+        }
         s = s.PadRight(boxW-2);
         
         // Draw!
@@ -108,11 +111,9 @@ namespace CCD2
     /// <returns>The string that was selected by the Enter key, or null if Escape was pressed</returns>
     public static string Run(string[] strings)
     {
-      int len = 0;
-      foreach(string s in strings)
-        if(s.Length > len)
-          len = s.Length;
-      return ChooseUserStringFromList(strings, len);
+      int maxLen = strings.Max(str => str.Length);
+
+      return ChooseUserStringFromList(strings.ToList(), maxLen);
     }
     
     
@@ -123,7 +124,7 @@ namespace CCD2
     /// <param name="strings">The list of strings to display in the text box</param>
     /// <param name="maxLength">The length of the longest string in the list</param>
     /// <returns>The string that was selected by the Enter key, or null if Escape was pressed</returns>
-    public static string ChooseUserStringFromList(string[] strings, int maxLength)
+    public static string ChooseUserStringFromList(List<string> strings, int maxLength)
     {
       return ChooseUserStringFromList(strings, maxLength, 0);
     }
@@ -135,17 +136,20 @@ namespace CCD2
     /// <param name="maxLength">The length of the longest string in the list</param>
     /// <param name="initialIndex">The initial index to select in the list</param>
     /// <returns>The string that was selected by the Enter key, or null if Escape was pressed</returns>
-    public static string ChooseUserStringFromList(string[] strings, int maxLength, int initialIndex)
+    public static string ChooseUserStringFromList(List<string> strings, int maxLength, int initialIndex)
     {
       cursorPos = initialIndex;
-      if(cursorPos < 0 || cursorPos >= strings.Length)
-        cursorPos = 0;
+
+      if (cursorPos < 0 || cursorPos >= strings.Count())
+      {
+          cursorPos = 0;
+      }
       
-      TextWindow.strings = strings;
+      TextWindow.strings = strings.ToArray();
       
       // Calculate the box extents (as long as the longest string, but no wider than the console window, similar considerations for height)
       boxW = System.Math.Min(maxLength + 2, Console.WindowWidth);
-      boxH = System.Math.Min(Console.WindowHeight, strings.Length + 2);
+      boxH = System.Math.Min(Console.WindowHeight, strings.Count() + 2);
 
       // Try to place the box at the cursor.
       boxX = Console.WindowLeft;
@@ -153,7 +157,9 @@ namespace CCD2
       
       // If this position would draw the box off the bottom of the console, move it up until it fits.
       if (boxY + boxH >= Console.WindowHeight)
-        boxY = Console.WindowHeight - boxH;
+      {
+          boxY = Console.WindowHeight - boxH;
+      }
       boxY += Console.WindowTop;
       
       // Cache the background so that we can restore it later.
@@ -181,7 +187,7 @@ namespace CCD2
             
           case Keys.Right: // Move the cursor down one element
           case Keys.Down:
-            if (cursorPos < strings.Length - 1)
+            if (cursorPos < strings.Count() - 1)
             {
               cursorPos++;
               DrawElements();
@@ -199,8 +205,8 @@ namespace CCD2
             
           case Keys.PageDown: // Move the cursor down one full screen
             cursorPos += boxH - 2;
-            if (cursorPos >= strings.Length)
-              cursorPos = strings.Length - 1;
+            if (cursorPos >= strings.Count())
+              cursorPos = strings.Count() - 1;
             DrawElements();
             break;
             
@@ -217,7 +223,7 @@ namespace CCD2
             break;
             
           case Keys.End: // Move the cursor to the bottom
-            cursorPos = strings.Length - 1;
+            cursorPos = strings.Count() - 1;
             DrawElements();
             break;
             
