@@ -62,55 +62,6 @@ namespace CCD2
             }
         }
 
-
-        /// <summary>
-        /// Build a regular expression around a set of args based on the first part of the regex, what goes between each argument,
-        /// and the end of the regex string.
-        /// </summary>
-        /// <param name="args">The arguments for the regex.  Each string in this will be escaped before being inserted into the regex</param>
-        /// <param name="first">The string that will start the regex (the beginning of the regex)</param>
-        /// <param name="middle">The string that will be placed between each argument in the regex</param>
-        /// <param name="end">The string that will end the regex</param>
-        /// <returns>The Regex that is built by this function.</returns>
-        public static Regex BuildSearchRegex(string[] args, string first, string middle, string end)
-        {
-            bool initial = true;
-            StringBuilder builder = new StringBuilder(first);
-            foreach (string arg in args)
-            {
-                if (!initial)
-                    builder.Append(middle);
-                initial = false;
-
-                builder.Append(Regex.Escape(arg));
-            }
-            builder.Append(end);
-            return new Regex(builder.ToString());
-        }
-
-
-        /// <summary>
-        /// Tests each string in a list against the supplied regex, any matches are added to the matches list.
-        /// </summary>
-        /// <param name="regex">The regular expression to compare against</param>
-        /// <param name="cachedStrings">A list of strings to test against the regex</param>
-        /// <param name="matches">A list that gets added to when matches are found</param>
-        /// <returns>The length of the longest string in the match list.</returns>
-        static int RunTest(Regex regex, string[] cachedStrings, List<string> matches)
-        {
-            int maxLength = 0;
-            foreach (string line in cachedStrings)
-            {
-                if (regex.IsMatch(line))
-                {
-                    if (line.Length > maxLength)
-                        maxLength = line.Length;
-                    matches.Add(line);
-                }
-            }
-            return maxLength;
-        }
-
         /// <summary>
         /// Displays the help text.
         /// </summary>
@@ -429,8 +380,6 @@ namespace CCD2
             return dirs;
         }
 
-
-
         /// <summary>
         /// If the condition is true, display the help information.
         /// </summary>
@@ -539,6 +488,7 @@ namespace CCD2
                         return;
                     // Scope for variable declaration
                     {
+                        // todo: fix arg popping
                         string[] newargs = new string[args.Length - 1];
                         for (int i = 0; i < newargs.Length; i++)
                             newargs[i] = args[i + 1];
@@ -555,7 +505,9 @@ namespace CCD2
 
             // Convert all args to lowercase.
             for (int i = 0; i < args.Length; i++)
+            { 
                 args[i] = args[i].ToLowerInvariant();
+            }
 
 
             // Load the roots and dirs.
@@ -566,15 +518,15 @@ namespace CCD2
             dirs = ValidateCurrentDirectory(roots, dirs, searchAllRoots);
 
             // Run with the "tight" regex (the regex that only finds tokens that are neighboring
-            Regex rex = BuildSearchRegex(args, @"\\", @"[^\\]*\\", @"[^\\]*\\$");
-            maxLength = RunTest(rex, dirs, matches);
+            Regex rex = Search.BuildSearchRegex(args, @"\\", @"[^\\]*\\", @"[^\\]*\\$");
+            maxLength = Search.RunTest(rex, dirs, matches);
 
             if (matches.Count == 0)
             {
                 // No match on the tight regex, so use the loose test 
                 // (args can have arbitrary numbers of tokens between them
-                Regex rexLoose = BuildSearchRegex(args, @"\\", @"([^\\]*\\)+", @"[^\\]*\\$");
-                maxLength = RunTest(rexLoose, dirs, matches);
+                Regex rexLoose = Search.BuildSearchRegex(args, @"\\", @"([^\\]*\\)+", @"[^\\]*\\$");
+                maxLength = Search.RunTest(rexLoose, dirs, matches);
             }
 
             if (matches.Count == 0)
@@ -619,7 +571,7 @@ namespace CCD2
                         }
                     }
                 }
-                match = TextWindow.Run(matches.ToArray(), maxLength, bestMatchIndex); // For more than one match, we need the text list.
+                match = TextWindow.ChooseUserStringFromList(matches.ToArray(), maxLength, bestMatchIndex); // For more than one match, we need the text list.
             }
             else
             {
@@ -630,6 +582,8 @@ namespace CCD2
             { 
                 ParentDirectoryChanger.Change(match);
             }
+
+            // todo: catch and dump out exceptions with stacks
         }
     }
 }

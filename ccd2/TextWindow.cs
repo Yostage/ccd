@@ -112,7 +112,7 @@ namespace CCD2
       foreach(string s in strings)
         if(s.Length > len)
           len = s.Length;
-      return Run(strings, len);
+      return ChooseUserStringFromList(strings, len);
     }
     
     
@@ -123,9 +123,9 @@ namespace CCD2
     /// <param name="strings">The list of strings to display in the text box</param>
     /// <param name="maxLength">The length of the longest string in the list</param>
     /// <returns>The string that was selected by the Enter key, or null if Escape was pressed</returns>
-    public static string Run(string[] strings, int maxLength)
+    public static string ChooseUserStringFromList(string[] strings, int maxLength)
     {
-      return Run(strings, maxLength, 0);
+      return ChooseUserStringFromList(strings, maxLength, 0);
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ namespace CCD2
     /// <param name="maxLength">The length of the longest string in the list</param>
     /// <param name="initialIndex">The initial index to select in the list</param>
     /// <returns>The string that was selected by the Enter key, or null if Escape was pressed</returns>
-    public static string Run(string[] strings, int maxLength, int initialIndex)
+    public static string ChooseUserStringFromList(string[] strings, int maxLength, int initialIndex)
     {
       cursorPos = initialIndex;
       if(cursorPos < 0 || cursorPos >= strings.Length)

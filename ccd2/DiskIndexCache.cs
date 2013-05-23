@@ -331,6 +331,7 @@ namespace CCD2
         public static void AddIgnore(string[] addition)
         {
             // Can't add an ignore rule for a directory that doesn't exist.
+            // todo: push upwards into program, throw here.
             if (!Directory.Exists(addition[0]))
             {
                 Console.WriteLine("Directory \"" + addition[0] + "\" does not exist");
@@ -444,7 +445,7 @@ namespace CCD2
                 Array.Copy(div, 1, tokens, 0, tokens.Length);
 
                 // Build the regex, starting with the root followed by any number of directories, then the next tokens, each with possibly multiple directories between (loose search).
-                regexes[i] = Program.BuildSearchRegex(tokens, Regex.Escape(div[0]) + @"([^\\]*\\)*", @"([^\\]*\\)+", @"[^\\]*\\$");
+                regexes[i] = Search.BuildSearchRegex(tokens, Regex.Escape(div[0]) + @"([^\\]*\\)*", @"([^\\]*\\)+", @"[^\\]*\\$");
             }
             return regexes;
         }
